@@ -130,7 +130,7 @@ gw_tw =
          homes_powered = (weight_tons * 500) / 30) 
 ```
 
-### Combine
+### Merge datasets
 ```{r}
 trashwheel_tidy = 
   bind_rows(mr_tw, prof_tw, gw_tw) %>% 
@@ -140,11 +140,65 @@ trashwheel_tidy =
 ```
 
 ### Description
-The number of observations in `mr_tw` dataset is `r nrow(mr_tw)`. The key variables include `dumpster`, `weight_tons`, and `homes_powered`.
-The number of observations in `prof_tw` dataset is `r nrow(prof_tw)`. The key variables include `dumpster`, `weight_tons`, and `homes_powered`.
-The number of observations in `gw_tw` dataset is `r nrow(gw_tw)`. The key variables include `cigarette_butts`, `weight_tons`, and `homes_powered`.
+1. The number of observations in `mr_tw` dataset is `r nrow(mr_tw)`. The key variables include `dumpster`, `weight_tons`, and `homes_powered`.
+2. The number of observations in `prof_tw` dataset is `r nrow(prof_tw)`. The key variables include `dumpster`, `weight_tons`, and `homes_powered`.
+3. The number of observations in `gw_tw` dataset is `r nrow(gw_tw)`. The key variables include `cigarette_butts`, `weight_tons`, and `homes_powered`.
 
 The total weight of trash collected by Professor Trash Wheel is `r sum(filter(trashwheel_tidy, type=="Professor")$weight_tons)`
 
 The total number of cigarette butts collected by Gwynnda in July of 2021 is `r sum((filter(trashwheel_tidy, type == "Gwynnda", year == 2021, month == "July"))$cigarette_butts)`.
+
+## Problem 3
+
+### Import, clean, and tidy the dataset of baseline demographics
+```{r, warning=FALSE}
+baseline = read.csv("./data/MCI_baseline.csv", skip = 1) %>%
+  janitor::clean_names() %>%
+  mutate(sex = ifelse(sex == 1, "male", "female"),
+         apoe4 = ifelse(apoe4 == 1, "carrier", "non_carrier"),
+         age_at_onset = as.numeric(age_at_onset))
+
+baseline_mci = baseline %>%
+  drop_na(age_at_onset)
+```
+Description: \
+First import the csv data of baseline demographics and skip the first row which is description. \
+Use `janitor` to rename the variables, and use `mutate` function to convert `sex` and `apoe4` into factor variables and convert `age_at_onset` to numeric variable. \
+Finally use `drop_na` function to remove the observations who do not meet the stated inclusion criteria. \
+There are `r nrow(baseline_mci)` observations and `r ncol(baseline_mci)` variables left in the dataset after cleaning.
+
+`r nrow(baseline)` participants were recruited, and only `r nrow(baseline_mci)` develop MCI. \
+The average baseline age is `r round(mean(baseline_mci$age_at_onset),2)`, and the proportion of women in the study are APOE4 carriers is `r round(nrow(filter(baseline_mci, sex == "female", apoe4 == "carrier"))/nrow(filter(baseline_mci, sex == "female")) * 100, 2)`%.
+
+
+### Import, clean, and tidy the dataset of longitudinally observed biomarker values
+```{r, warning=FALSE}
+amyloid = read.csv("./data/mci_amyloid.csv", skip = 1) %>%
+  janitor::clean_names() %>%
+  rename(id = study_id) %>%
+  mutate_all(as.numeric)
+```
+Description: \
+First import the csv data of longitudinally observed biomarker values and skip the first row which is description. \
+Then, rename the variable `study_id` to `id` in order to prepare for merging with the `baseline_mci` dataset. \
+And use `mutate_all` function to convert all variables to numeric variables. \
+The dataset `amyloid` contains `r ncol(amyloid)` variables and `r nrow(amyloid)` observations. The key variables include `r names(amyloid)`.
+
+### Check whether some participants appear in only the baseline or amyloid datasets
+```{r}
+baseline_only = anti_join(baseline_mci, amyloid, by = "id") 
+```
+By checking, there are `r nrow(anti_join(baseline_mci, amyloid, by = "id"))` participants appear in only the baseline dataset, their `id` are `14`, `49`, and `268`. And there are `r nrow(anti_join(amyloid, baseline, by = "id"))` participants only appear in the amyloid dataset.
+
+### Merge
+```{r}
+baseline_amyloid_merge = inner_join(baseline_mci, amyloid, by = "id") %>%
+  drop_na()
+```
+In order to only retain the participants who appear in both datasets, I combined the two datasets by `id`. \
+The resulting dataset contains `r nrow(baseline_amyloid_merge)` observations and `r ncol(baseline_amyloid_merge)` variables which are `r names(baseline_amyloid_merge)` after merging.
+
+```{r}
+write.csv(baseline_amyloid_merge, "./data/result_merge.csv")
+```
 
