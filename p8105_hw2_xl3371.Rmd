@@ -132,7 +132,7 @@ gw_tw =
 
 ### Merge datasets
 ```{r}
-trashwheel_tidy = 
+trashwheel_merge = 
   bind_rows(mr_tw, prof_tw, gw_tw) %>% 
   janitor::clean_names() %>% 
   select(type, dumpster, everything()) %>% 
@@ -143,10 +143,11 @@ trashwheel_tidy =
 1. The number of observations in `mr_tw` dataset is `r nrow(mr_tw)`. The key variables include `dumpster`, `weight_tons`, and `homes_powered`.
 2. The number of observations in `prof_tw` dataset is `r nrow(prof_tw)`. The key variables include `dumpster`, `weight_tons`, and `homes_powered`.
 3. The number of observations in `gw_tw` dataset is `r nrow(gw_tw)`. The key variables include `cigarette_butts`, `weight_tons`, and `homes_powered`.
+4. There are `r ncol(trashwheel_merge)` variables and `r nrow(trashwheel_merge)` observations in this combined dataset. The key variables include the types of the trash wheel, either `Mr`, `Professor`, or `Gwynnda`, `weight_tons`, `cigarette_butts`, and other similar items. 
 
-The total weight of trash collected by Professor Trash Wheel is `r sum(filter(trashwheel_tidy, type=="Professor")$weight_tons)`
+The total weight of trash collected by Professor Trash Wheel is `r sum(filter(trashwheel_merge, type=="Professor")$weight_tons)`
 
-The total number of cigarette butts collected by Gwynnda in July of 2021 is `r sum((filter(trashwheel_tidy, type == "Gwynnda", year == 2021, month == "July"))$cigarette_butts)`.
+The total number of cigarette butts collected by Gwynnda in July of 2021 is `r sum((filter(trashwheel_merge, type == "Gwynnda", year == 2021, month == "July"))$cigarette_butts)`.
 
 ## Problem 3
 
