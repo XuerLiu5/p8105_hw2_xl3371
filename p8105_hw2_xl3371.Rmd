@@ -99,7 +99,7 @@ result = left_join(pols_snp, unemployment_clean, by = c("year","month"))
 ### Import and clean data from Mr. Trash Wheel sheet
 ```{r}
 mr_tw = 
-  read_excel("./data/202207 Trash Wheel Collection Data.xlsx", sheet = 1, range = "A2:N549") %>%
+  read_excel("./data/202309 Trash Wheel Collection Data.xlsx", sheet = 1, range = "A2:N586") %>%
   janitor::clean_names() %>%
   drop_na(dumpster) %>%
   mutate(year = as.integer(year),
@@ -111,7 +111,7 @@ mr_tw =
 ### Import and clean data from Professor Trash Wheel sheet
 ```{r}
 prof_tw =
-  read_excel("./data/202207 Trash Wheel Collection Data.xlsx", sheet = 2, range = "A2:M96") %>%
+  read_excel("./data/202309 Trash Wheel Collection Data.xlsx", sheet = 2, range = "A2:M106") %>%
   janitor::clean_names() %>%
   drop_na(dumpster) %>%
   mutate(year = as.integer(year),
@@ -122,7 +122,7 @@ prof_tw =
 ### Import and clean data from Gwynnda Trash Wheel sheet
 ```{r}
 gw_tw =
-  read_excel("./data/202207 Trash Wheel Collection Data.xlsx", sheet = 4, range = "A2:K108") %>%
+  read_excel("./data/202309 Trash Wheel Collection Data.xlsx", sheet = 4, range = "A2:L157") %>%
   janitor::clean_names() %>%
   drop_na(dumpster) %>%
   mutate(year = as.integer(year),
