@@ -169,7 +169,7 @@ Finally use `drop_na` function to remove the observations who do not meet the st
 There are `r nrow(baseline_mci)` observations and `r ncol(baseline_mci)` variables left in the dataset after cleaning.
 
 `r nrow(baseline)` participants were recruited, and only `r nrow(baseline_mci)` develop MCI. \
-The average baseline age is `r round(mean(baseline_mci$age_at_onset),2)`, and the proportion of women in the study are APOE4 carriers is `r round(nrow(filter(baseline_mci, sex == "female", apoe4 == "carrier"))/nrow(filter(baseline_mci, sex == "female")) * 100, 2)`%.
+The average baseline age is `r round(mean(baseline_mci$current_age),2)`, and the proportion of women in the study are APOE4 carriers is `r round(nrow(filter(baseline_mci, sex == "female", apoe4 == "carrier"))/nrow(filter(baseline_mci, sex == "female")) * 100, 2)`%.
 
 
 ### Import, clean, and tidy the dataset of longitudinally observed biomarker values
