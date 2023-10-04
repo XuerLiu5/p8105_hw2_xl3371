@@ -111,7 +111,7 @@ mr_tw =
 ### Import and clean data from Professor Trash Wheel sheet
 ```{r}
 prof_tw =
-  read_excel("./data/202309 Trash Wheel Collection Data.xlsx", sheet = 2, range = "A2:M106") %>%
+  read_excel("./data/202309 Trash Wheel Collection Data.xlsx", sheet = 2, range = "A2:M108") %>%
   janitor::clean_names() %>%
   drop_na(dumpster) %>%
   mutate(year = as.integer(year),
