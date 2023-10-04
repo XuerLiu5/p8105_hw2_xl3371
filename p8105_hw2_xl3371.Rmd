@@ -176,13 +176,20 @@ The average baseline age is `r round(mean(baseline_mci$age_at_onset),2)`, and th
 ```{r, warning=FALSE}
 amyloid = read.csv("./data/mci_amyloid.csv", skip = 1) %>%
   janitor::clean_names() %>%
-  rename(id = study_id) %>%
-  mutate_all(as.numeric)
+  rename(id = study_id,
+         time_0 = baseline) %>%
+  pivot_longer(
+    time_0:time_8, 
+    names_to = "time_in_years",
+    values_to = "amyloid_ratio"
+  )  %>%
+  mutate(amyloid_ratio = as.numeric(amyloid_ratio))
 ```
 Description: \
 First import the csv data of longitudinally observed biomarker values and skip the first row which is description. \
-Then, rename the variable `study_id` to `id` in order to prepare for merging with the `baseline_mci` dataset. \
-And use `mutate_all` function to convert all variables to numeric variables. \
+Second, rename the variable `study_id` to `id` in order to prepare for merging with the `baseline_mci` dataset; rename `baseline` to `time_0`. \
+Then, use the `pivot_longer` function to switch the dataset from wide to long format, and convert the five variables (`time_0`, `time_2`, `time_4`, `time_6`, and `time_8`) measuring the ratio at a given time into two variables named with `time_in_years` and `amyloid_ratio` which contains all ratio values. \
+And use `mutate` function to convert `amyloid_ratio` to numeric variable. \
 The dataset `amyloid` contains `r ncol(amyloid)` variables and `r nrow(amyloid)` observations. The key variables include `r names(amyloid)`.
 
 ### Check whether some participants appear in only the baseline or amyloid datasets
